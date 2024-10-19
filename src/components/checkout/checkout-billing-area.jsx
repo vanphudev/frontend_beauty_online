@@ -1,10 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ErrorMsg02 from "../common/error-msg02";
 import { useSelector } from "react-redux";
+import { useGetApiProvinceQuery, useGetApiDistrictQuery, useGetApiWardQuery } from "@/redux/features/order/orderApi"
 
 const CheckoutBillingArea = ({ register, errors }) => {
    const { user } = useSelector((state) => state.auth);
-
+   const [selectedProvince, setSelectedProvince] = useState('');
+   const [selectedDistrict, setSelectedDistrict] = useState('');
+   const { data: provinces, isError: provinceError, isLoading: provinceLoading } = useGetApiProvinceQuery();
+   const { data: districts, isError: districtError, isLoading: districtLoading } = useGetApiDistrictQuery(selectedProvince, {
+      skip: !selectedProvince,
+   });
+   const { data: wards, isError: wardError, isLoading: wardLoading } = useGetApiWardQuery(selectedDistrict, {
+      skip: !selectedDistrict,
+   });
+   const handleProvinceChange = (e) => {
+      const provinceCode = e.target.value;
+      setSelectedProvince(provinceCode);
+      setSelectedDistrict('');
+   };
+   const handleDistrictChange = (e) => {
+      const districtCode = e.target.value;
+      setSelectedDistrict(districtCode);
+   };
    return (
       <div className='tp-checkout-bill-area'>
          <h3 className='tp-checkout-bill-title'>Chi tiết thanh toán</h3>
@@ -24,104 +42,135 @@ const CheckoutBillingArea = ({ register, errors }) => {
                            id='name'
                            type='text'
                            placeholder='Nhập Tên của bạn'
-                           defaultValue={user?.fullName}
+                           value={user?.fullName}
                         />
                         <ErrorMsg02 msg={errors?.lastName?.message} />
                      </div>
                   </div>
                   <div className='col-md-12'>
                      <div className='tp-checkout-input'>
-                        <label>Tên đường</label>
+                        <label>Tên đường <span>*</span></label>
                         <input
                            {...register("address", { required: `Address is required!` })}
                            name='address'
                            id='address'
                            type='text'
-                           placeholder='House number and street name'
+                           placeholder='Nhập số nhà và tên đường của bạn !'
                         />
-                        <ErrorMsg02 msg={errors?.address?.message} />
                      </div>
                   </div>
                   <div className='col-md-4'>
                      <div className='tp-checkout-input'>
-                        <label>Tỉnh thành</label>
-                        <select {...register("province", { required: `Province is required!` })} id='province'>
-                           <option value=''>Select Province</option>
-                           <option value='province1'>Province 1</option>
-                           <option value='province2'>Province 2</option>
-                           <option value='province3'>Province 3</option>
+                        <label>Tỉnh thành <span>*</span></label>
+                        <select {...register("province", { required: `Province is required!` })} id='province' onChange={handleProvinceChange} disabled={provinceLoading || provinceError}>
+                           {provinceLoading ? (
+                              <option value=''>Đang tải...</option>
+                           ) : provinceError ? (
+                              <option value=''>Lỗi dữ liệu</option>
+                           ) : (
+                              <>
+                                 <option value=''>Chọn Tỉnh/Thành phố</option>
+                                 {provinces?.results.map((province) => (
+                                    <option key={province.province_id} value={province.province_id}>
+                                       {province.province_name}
+                                    </option>
+                                 ))}
+                              </>
+                           )}
                         </select>
-                        <ErrorMsg02 msg={errors?.province?.message} />
                      </div>
                   </div>
                   <div className='col-md-4'>
                      <div className='tp-checkout-input'>
-                        <label>Quận/Huyện</label>
-                        <select {...register("district", { required: `District is required!` })} id='district'>
-                           <option value=''>Select District</option>
-                           <option value='district1'>District 1</option>
-                           <option value='district2'>District 2</option>
-                           <option value='district3'>District 3</option>
+                        <label>Quận/Huyện <span>*</span></label>
+                        <select {...register("district", { required: `District is required!` })} onChange={handleDistrictChange} disabled={!selectedProvince || districtLoading || districtError}>
+                           {!selectedProvince ? (
+                              <option value=''>Chọn Quận/huyện</option>
+                           ) : districtLoading ? (
+                              <option value=''>Đang tải...</option>
+                           ) : districtError ? (
+                              <option value=''>Lỗi dữ liệu</option>
+                           ) : (
+                              <>
+                                 <option value=''>Chọn Quận/Huyện</option>
+                                 {districts?.results.map((district) => (
+                                    <option key={district.district_id} value={district.district_id}>
+                                       {district.district_name}
+                                    </option>
+                                 ))}
+                              </>
+                           )}
                         </select>
-                        <ErrorMsg02 msg={errors?.district?.message} />
                      </div>
                   </div>
                   <div className='col-md-4'>
                      <div className='tp-checkout-input'>
-                        <label>Phường/Xã/Thị Trấn</label>
-                        <select {...register("ward", { required: `Ward is required!` })} id='ward'>
-                           <option value=''>Select Ward</option>
-                           <option value='ward1'>Ward 1</option>
-                           <option value='ward2'>Ward 2</option>
-                           <option value='ward3'>Ward 3</option>
+                        <label>Xã/Phường <span>*</span></label>
+                        <select {...register("ward", { required: `Ward is required!` })} disabled={!selectedDistrict || wardLoading || wardError}>
+                           {!selectedDistrict ? (
+                              <option value=''>Chọn Xã/Phường</option>
+                           ) : wardLoading ? (
+                              <option value=''>Đang tải...</option>
+                           ) : wardError ? (
+                              <option value=''>Lỗi dữ liệu</option>
+                           ) : (
+                              <>
+                                 <option value=''>Chọn Xã/Phường</option>
+                                 {wards?.results.map((ward) => (
+                                    <option key={ward.ward_id} value={ward.ward_id}>
+                                       {ward.ward_name}
+                                    </option>
+                                 ))}
+                              </>
+                           )}
                         </select>
-                        <ErrorMsg02 msg={errors?.ward?.message} />
                      </div>
+                     <ErrorMsg02 msg={errors?.address?.message} />
                   </div>
-                  <div className='col-md-12'>
-                     <div className='tp-checkout-input'>
-                        <label>
-                           Phone <span>*</span>
-                        </label>
-                        <input
-                           {...register("contactNo", {
-                              required: `Phone is required!`,
-                           })}
-                           name='contactNo'
-                           id='contactNo'
-                           type='text'
-                           placeholder='Phone'
-                           defaultValue={user?.phone}
-                        />
-                        <ErrorMsg02 msg={errors?.contactNo?.message} />
-                     </div>
+               </div>
+               <div className='col-md-12'>
+                  <div className='tp-checkout-input'>
+                     <label>
+                        Phone <span>*</span>
+                     </label>
+                     <input
+                        {...register("contactNo", {
+                           required: `Phone is required!`,
+                        })}
+                        name='contactNo'
+                        id='contactNo'
+                        type='text'
+                        placeholder='Phone'
+                        value={user?.phone}
+                     />
+                     <ErrorMsg02 msg={errors?.contactNo?.message} />
                   </div>
-                  <div className='col-md-12'>
-                     <div className='tp-checkout-input'>
-                        <label>
-                           Địa chỉ Email <span>*</span>
-                        </label>
-                        <input
-                           {...register("email", { required: `Email is required!` })}
-                           name='email'
-                           id='email'
-                           type='email'
-                           placeholder='Email'
-                           defaultValue={user?.email}
-                        />
-                        <ErrorMsg02 msg={errors?.email?.message} />
-                     </div>
+               </div>
+               <div className='col-md-12'>
+                  <div className='tp-checkout-input'>
+                     <label>
+                        Địa chỉ Email <span>*</span>
+                     </label>
+                     <input
+                        {...register("email", { required: `Email is required!` })}
+                        name='email'
+                        id='email'
+                        type='email'
+                        placeholder='Email'
+                        value={user?.email}
+                     />
+                     <ErrorMsg02 msg={errors?.email?.message} />
                   </div>
-                  <div className='col-md-12'>
-                     <div className='tp-checkout-input'>
-                        <label>Ghi chú cho đơn hàng của bạn</label>
-                        <textarea
-                           {...register("orderNote", { required: false })}
-                           name='orderNote'
-                           id='orderNote'
-                           placeholder='Ghi chú cho đơn hàng của bạn !'
-                        />
-                     </div>
+               </div>
+               <div className='col-md-12'>
+                  <div className='tp-checkout-input'>
+                     <label>Ghi chú cho đơn hàng của bạn</label>
+                     <textarea
+                        {...register("orderNote", { required: false })}
+                        name='orderNote'
+                        id='orderNote'
+                        placeholder='Ghi chú cho đơn hàng của bạn !'
+                     />
                   </div>
                </div>
             </div>

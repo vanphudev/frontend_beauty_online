@@ -30,9 +30,6 @@ function ProfileSetting({active,handleActive}) {
           <Link href="/profile">Thông tin của tôi</Link>
         </li>
         <li>
-          <Link href="/wishlist">Sản phẩm yêu thích</Link>
-        </li>
-        <li>
           <Link href="/cart">Giỏ hàng</Link>
         </li>
         <li>

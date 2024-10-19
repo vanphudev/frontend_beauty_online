@@ -80,7 +80,6 @@ const CheckoutOrderArea = ({ checkoutData }) => {
                display: 'flex',
                alignItems: 'center',
                padding: '10px',
-               marginBottom: '10px',
                border: '1px solid #ddd',
                borderRadius: '5px',
                backgroundColor: 'white',

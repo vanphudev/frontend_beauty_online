@@ -1,22 +1,59 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useCartInfo from "@/hooks/use-cart-info";
 import RenderCartProgress from "./render-cart-progress";
 import empty_cart_img from "@assets/img/product/cartmini/empty-cart.png";
-import {closeCartMini, remove_product} from "@/redux/features/cartSlice";
+import { closeCartMini, load_cart_products } from "@/redux/features/cartSlice";
+import { useRemoveFromCartMutation, useGetCartByUserQuery } from "@/redux/features/cartSlice";
 import formatCurrency from "@/lib/funcMoney";
+import { notifySuccess, notifyError } from "@/utils/toast";
+
 const CartMiniSidebar = () => {
-   const {cart_products, cartMiniOpen} = useSelector((state) => state.cart);
-   const {total} = useCartInfo();
+   const { cart_products, cartMiniOpen } = useSelector((state) => state.cart);
+   const [removeToCart, { }] = useRemoveFromCartMutation();
+   const { data: cartData, refetch } = useGetCartByUserQuery();
+   const { total } = useCartInfo();
    const dispatch = useDispatch();
-   // handle remove product
+
    const handleRemovePrd = (prd) => {
-      dispatch(remove_product(prd));
+      removeProductCartById(prd);
    };
 
-   // handle close cart mini
+   const removeProductCartById = async (product) => {
+      try {
+         const data = await removeToCart({
+            productId: product._id,
+         });
+
+         if (data?.error) {
+            notifyError(data.error.data.message);
+            return;
+         }
+
+         if (data.error?.data.code === 405) {
+            notifyError(data.error.data.message);
+            router.push("/login");
+            return;
+         }
+
+         if (data.data.status === 200) {
+            refetch();
+            notifySuccess("Xóa sản phẩm khỏi giỏ hàng thành công !");
+         }
+      } catch (error) {
+         notifyError("Đã xảy ra lỗi khi xóa sản phẩm ra khỏi giỏ hàng.", error);
+      }
+   }
+
+   useEffect(() => {
+      if (cartData) {
+         const cart_products = cartData?.data?.cart?.items || [];
+         dispatch(load_cart_products(cart_products)); // Cập nhật Redux với giỏ hàng mới
+      }
+   }, [cartData, dispatch]);
+
    const handleCloseCartMini = () => {
       dispatch(closeCartMini());
    };
@@ -75,7 +112,7 @@ const CartMiniSidebar = () => {
                                  </div>
                               </div>
                               <a
-                                 onClick={() => handleRemovePrd({id: item._id})}
+                                 onClick={() => handleRemovePrd(item)}
                                  className='cartmini__del cursor-pointer'>
                                  <i className='fa-regular fa-xmark'></i>
                               </a>

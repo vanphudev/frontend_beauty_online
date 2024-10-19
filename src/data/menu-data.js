@@ -29,12 +29,6 @@ const menu_data = [
       title: "Giỏ hàng",
       link: "/cart",
    },
-   {
-      id: 6,
-      single_link: true,
-      title: "Yêu thích",
-      link: "/wishlist",
-   },
 ];
 
 export default menu_data;

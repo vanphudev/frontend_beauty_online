@@ -13,11 +13,10 @@ import HeaderTopRight from "./header-com/header-top-right";
 import HeaderMainRight from "./header-com/header-main-right";
 import CartMiniSidebar from "@/components/common/cart-mini-sidebar";
 import HeaderSearchForm from "@/components/forms/header-search-form";
-import { CartTwo, Compare, CategoryMenu, Facebook, ShippingCar, Phone, User, PhoneTwo, Wishlist, Search } from "@/svg";
+import { CartTwo, Compare, CategoryMenu, Facebook, ShippingCar, Phone, User, PhoneTwo, Search } from "@/svg";
 const Header = () => {
-   const { wishlist } = useSelector((state) => state.wishlist);
    const [isCategoryActive, setIsCategoryActive] = useState(false);
-   const { quantity } = useCartInfo();
+   const { cart_products } = useSelector((state) => state.cart);
    const { sticky } = useSticky();
    const dispatch = useDispatch();
    return (
@@ -106,23 +105,17 @@ const Header = () => {
                            </div>
                            <div className="col-xl-3 col-lg-3 col-md-3 col-6">
                               <div className="tp-header-action d-flex align-items-center justify-content-end ml-50">
-                                 <div className="tp-header-action-item d-none d-lg-block">
-                                    <Link href="/wishlist" className="tp-header-action-btn">
-                                       <Wishlist />
-                                       <span className="tp-header-action-badge">{wishlist.length}</span>
-                                    </Link>
-                                 </div>
                                  <div className="tp-header-action-item">
                                     <button onClick={() => dispatch(openCartMini())} type="button" className="tp-header-action-btn cartmini-open-btn">
                                        <CartTwo />
-                                       <span className="tp-header-action-badge">{quantity}</span>
+                                       <span className="tp-header-action-badge">{cart_products.length}</span>
                                     </button>
                                  </div>
                                  <div className="tp-header-action-item d-none d-lg-block">
-                              <Link href="/profile" className="tp-header-action-btn">
-                                 <User />
-                              </Link>
-                           </div>
+                                    <Link href="/profile" className="tp-header-action-btn">
+                                       <User />
+                                    </Link>
+                                 </div>
                               </div>
                            </div>
                         </div>
@@ -152,16 +145,10 @@ const Header = () => {
                      </div>
                      <div className="col-xl-3 col-lg-3 col-md-3 col-6">
                         <div className="tp-header-action d-flex align-items-center justify-content-end ml-50">
-                           <div className="tp-header-action-item d-none d-lg-block">
-                              <Link href="/wishlist" className="tp-header-action-btn">
-                                 <Wishlist />
-                                 <span className="tp-header-action-badge">{wishlist.length}</span>
-                              </Link>
-                           </div>
                            <div className="tp-header-action-item">
                               <button onClick={() => dispatch(openCartMini())} type="button" className="tp-header-action-btn cartmini-open-btn">
                                  <CartTwo />
-                                 <span className="tp-header-action-badge">{quantity}</span>
+                                 <span className="tp-header-action-badge">{cart_products.length}</span>
                               </button>
                            </div>
                            <div className="tp-header-action-item d-none d-lg-block">

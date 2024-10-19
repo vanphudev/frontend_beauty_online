@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ReactModal from "react-modal";
 // internal
-import {handleModalClose} from "@/redux/features/productModalSlice";
+import { handleModalClose } from "@/redux/features/productModalSlice";
 import DetailsThumbWrapper from "@/components/product-details/details-thumb-wrapper";
 import DetailsWrapper from "@/components/product-details/details-wrapper";
-import {initialOrderQuantity} from "@/redux/features/cartSlice";
+import { initialOrderQuantity } from "@/redux/features/cartSlice";
 
 const customStyles = {
    content: {
@@ -20,8 +20,8 @@ const customStyles = {
 };
 
 const ProductModal = () => {
-   const {productItem, isModalOpen} = useSelector((state) => state.productModal);
-   const {images, inventory} = productItem || {};
+   const { productItem, isModalOpen } = useSelector((state) => state.productModal);
+   const { images, inventory } = productItem || {};
    const [activeImg, setActiveImg] = useState(images && images.length > 0 ? images[0] : null);
    const [loading, setLoading] = useState(false);
    const dispatch = useDispatch();

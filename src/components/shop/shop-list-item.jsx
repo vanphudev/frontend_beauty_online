@@ -4,11 +4,9 @@ import Image from "next/image";
 import {Rating} from "react-simple-star-rating";
 import Link from "next/link";
 // internal
-import {Cart, CompareThree, QuickView, Wishlist} from "@/svg";
+import {Cart,QuickView} from "@/svg";
 import {handleProductModal} from "@/redux/features/productModalSlice";
 import {add_cart_product} from "@/redux/features/cartSlice";
-import {add_to_wishlist} from "@/redux/features/wishlist-slice";
-import {add_to_compare} from "@/redux/features/compareSlice";
 import formatCurrency from "@/lib/funcMoney";
 const ShopListItem = ({product}) => {
    const {
@@ -42,10 +40,6 @@ const ShopListItem = ({product}) => {
    const handleAddProduct = (prd) => {
       dispatch(add_cart_product(prd));
    };
-   // handle wishlist product
-   const handleWishlistProduct = (prd) => {
-      dispatch(add_to_wishlist(prd));
-   };
 
    return (
       <div className='tp-product-list-item d-md-flex' style={{minWidth: "890px", maxWidth: "890px"}}>
@@ -62,13 +56,6 @@ const ShopListItem = ({product}) => {
                      onClick={() => dispatch(handleProductModal(product))}>
                      <QuickView />
                      <span className='tp-product-tooltip tp-product-tooltip-right'>Quick View</span>
-                  </button>
-                  <button
-                     type='button'
-                     onClick={() => handleWishlistProduct(product)}
-                     className='tp-product-action-btn-2 tp-product-add-to-wishlist-btn'>
-                     <Wishlist />
-                     <span className='tp-product-tooltip tp-product-tooltip-right'>Add To Wishlist</span>
                   </button>
                </div>
             </div>

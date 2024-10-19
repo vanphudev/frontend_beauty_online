@@ -1,20 +1,21 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {Rating} from "react-simple-star-rating";
+import { Rating } from "react-simple-star-rating";
 import dayjs from "dayjs";
 import { useRouter } from 'next/router';
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Dotdotdot from "react-dotdotdot";
-import {Cart, QuickView, Wishlist} from "@/svg";
+import { Cart, QuickView } from "@/svg";
 import Timer from "@/components/common/timer";
-import {handleProductModal} from "@/redux/features/productModalSlice";
-import {add_cart_product} from "@/redux/features/cartSlice";
-import {add_to_wishlist} from "@/redux/features/wishlist-slice";
+import { handleProductModal } from "@/redux/features/productModalSlice";
+import {
+   load_cart_products,
+} from "@/redux/features/cartSlice";
 import formatCurrency from "@/lib/funcMoney";
-import {useAddToCartMutation,useGetCartByUserQuery } from "@/redux/features/cartSlice";
+import { useAddToCartMutation, useGetCartByUserQuery } from "@/redux/features/cartSlice";
 import { notifySuccess, notifyError } from "@/utils/toast";
-const ProductItem = ({product, offer_style = false}) => {
+const ProductItem = ({ product, offer_style = false }) => {
    const {
       _id,
       name,
@@ -29,14 +30,15 @@ const ProductItem = ({product, offer_style = false}) => {
       inventory,
       createdAt,
    } = product || {};
+
+
    const router = useRouter();
-   const { data: cartData, isError, isLoading } = useGetCartByUserQuery();
-   const cart_products_load = cartData?.data?.cart?.items || [];
-   const [addToCart, {}] = useAddToCartMutation();
-   const {cart_products} = useSelector((state) => state.cart);
-   const {wishlist} = useSelector((state) => state.wishlist);
+
+   const [addToCart, { }] = useAddToCartMutation();
+   const { cart_products } = useSelector((state) => state.cart);
+   const { data: cartData, refetch } = useGetCartByUserQuery();
+
    const isAddedToCart = Array.isArray(cart_products) && cart_products.some((prd) => prd?.productId._id === _id);
-   const isAddedToWishlist = wishlist.some((prd) => prd._id === _id);
    const dispatch = useDispatch();
    const [ratingVal, setRatingVal] = useState(0);
 
@@ -54,32 +56,43 @@ const ProductItem = ({product, offer_style = false}) => {
       addProductToCart(prd);
    };
 
-   const addProductToCart = (product) => {
-      addToCart({
-         productId: product._id,
-         quantity: 1,
-      }).then((data) => {
+   const addProductToCart = async (product) => {
+      try {
+         const data = await addToCart({
+            productId: product._id,
+            quantity: 1,
+         });
+
          console.log("data", data);
+
          if (data?.error) {
-            notifyError(data?.error?.data?.message);
+            notifyError(data.error.data.message);
+            return;
          }
-         if (data?.error?.data?.code == 405) {
-            notifyError(data?.error?.data?.message);
+
+         if (data.error?.data.code === 405) {
+            notifyError(data.error.data.message);
             router.push("/login");
+            return;
          }
-         if (data?.data?.status == 200) {
-            
-            // dispatch(add_cart_product(item));
+
+         if (data.data.status === 200) {
+            refetch();
             notifySuccess("Thêm sản phẩm vào giỏ thành công !");
          }
-       })
+      } catch (error) {
+         notifyError("Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng.", error);
+      }
    };
 
-   // handle wishlist product
-   const handleWishlistProduct = (prd) => {
-      dispatch(add_to_wishlist(prd));
-   };
+   useEffect(() => {
+      if (cartData) {
+         const cart_products = cartData?.data?.cart?.items || [];
+         dispatch(load_cart_products(cart_products)); // Cập nhật Redux với giỏ hàng mới
+      }
+   }, [cartData, dispatch]);
 
+   
    return (
       <>
          <div className={`${offer_style ? "tp-product-offer-item" : "mb-25"} tp-product-item transition-3`}>
@@ -90,7 +103,7 @@ const ProductItem = ({product, offer_style = false}) => {
                      width='0'
                      height='0'
                      sizes='100vw'
-                     style={{width: "100%", maxHeight: "250px", minHeight: "250px"}}
+                     style={{ width: "100%", maxHeight: "250px", minHeight: "250px" }}
                      alt='product-electronic'
                   />
                   <div className='tp-product-badge'>
@@ -104,18 +117,16 @@ const ProductItem = ({product, offer_style = false}) => {
                         {isAddedToCart ? (
                            <Link
                               href='/cart'
-                              className={`tp-product-action-btn ${
-                                 isAddedToCart ? "active" : ""
-                              } tp-product-add-cart-btn`}>
+                              className={`tp-product-action-btn ${isAddedToCart ? "active" : ""
+                                 } tp-product-add-cart-btn`}>
                               <Cart /> <span className='tp-product-tooltip'>View Cart</span>
                            </Link>
                         ) : (
                            <button
                               onClick={() => handleAddProduct(product)}
                               type='button'
-                              className={`tp-product-action-btn ${
-                                 isAddedToCart ? "active" : ""
-                              } tp-product-add-cart-btn`}
+                              className={`tp-product-action-btn ${isAddedToCart ? "active" : ""
+                                 } tp-product-add-cart-btn`}
                               disabled={inventory == 0}>
                               <Cart />
                               <span className='tp-product-tooltip'>Add to Cart</span>
@@ -127,16 +138,6 @@ const ProductItem = ({product, offer_style = false}) => {
                            className='tp-product-action-btn tp-product-quick-view-btn'>
                            <QuickView />
                            <span className='tp-product-tooltip'>Quick View</span>
-                        </button>
-                        <button
-                           type='button'
-                           className={`tp-product-action-btn ${
-                              isAddedToWishlist ? "active" : ""
-                           } tp-product-add-to-wishlist-btn`}
-                           onClick={() => handleWishlistProduct(product)}
-                           disabled={inventory == 0}>
-                           <Wishlist />
-                           <span className='tp-product-tooltip'>Add To Wishlist</span>
                         </button>
                      </div>
                   </div>

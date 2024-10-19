@@ -1,9 +1,9 @@
-import {useState} from "react";
-import {useSelector} from "react-redux";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 
-const CheckoutCoupon = ({handleCouponCode, couponRef, couponApplyMsg}) => {
+const CheckoutCoupon = ({ handleCouponCode, couponRef, couponApplyMsg }) => {
    const [isOpen, setIsOpen] = useState(false);
-   const {coupon_info} = useSelector((state) => state.coupon);
+   const { coupon_info } = useSelector((state) => state.coupon);
    return (
       <div className='tp-checkout-verify-item'>
          <p className='tp-checkout-verify-reveal'>
@@ -25,7 +25,7 @@ const CheckoutCoupon = ({handleCouponCode, couponRef, couponApplyMsg}) => {
                   </button>
                </form>
                {couponApplyMsg && (
-                  <p className='p-2' style={{color: "green"}}>
+                  <p className='p-2' style={{ color: "green" }}>
                      {couponApplyMsg}
                   </p>
                )}

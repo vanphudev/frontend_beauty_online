@@ -8,7 +8,6 @@ import DetailsBottomInfo from "./details-bottom-info";
 import ProductDetailsCountdown from "./product-details-countdown";
 import ProductQuantity from "./product-quantity";
 import {add_cart_product} from "@/redux/features/cartSlice";
-import {add_to_wishlist} from "@/redux/features/wishlist-slice";
 import {add_to_compare} from "@/redux/features/compareSlice";
 import {handleModalClose} from "@/redux/features/productModalSlice";
 import formatCurrency from "@/lib/funcMoney";
@@ -48,15 +47,6 @@ const DetailsWrapper = ({productItem, handleImageActive, activeImg, detailsBotto
       dispatch(add_cart_product(prd));
    };
 
-   // handle wishlist product
-   const handleWishlistProduct = (prd) => {
-      dispatch(add_to_wishlist(prd));
-   };
-
-   // handle compare product
-   const handleCompareProduct = (prd) => {
-      dispatch(add_to_compare(prd));
-   };
 
    return (
       <div className='tp-product-details-wrapper'>
@@ -120,16 +110,6 @@ const DetailsWrapper = ({productItem, handleImageActive, activeImg, detailsBotto
             </Link>
          </div>
          {/* product-details-action-sm start */}
-         <div className='tp-product-details-action-sm'>
-            <button
-               disabled={inventory == 0}
-               onClick={() => handleWishlistProduct(productItem)}
-               type='button'
-               className='tp-product-details-action-sm-btn'>
-               <WishlistTwo />
-               Add Wishlist
-            </button>
-         </div>
          {/* product-details-action-sm end */}
          {detailsBottom && <DetailsBottomInfo category={categoryId?.name} tag={productUrl} />}
       </div>

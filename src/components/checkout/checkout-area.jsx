@@ -17,9 +17,9 @@ const CheckoutArea = () => {
             <div className='container'>
                {cart_products.length === 0 && (
                   <div className='text-center pt-50'>
-                     <h3 className='py-2'>No items found in cart to checkout</h3>
+                     <h3 className='py-2'>Không có sản phẩm nào trong giỏ hàng !</h3>
                      <Link href='/shop' className='tp-checkout-btn'>
-                        Return to shop
+                        Mua sắm ngay
                      </Link>
                   </div>
                )}

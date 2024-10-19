@@ -1,5 +1,5 @@
-import {apiSlice} from "@/redux/api/apiSlice";
-import {userLoggedIn} from "./authSlice";
+import { apiSlice } from "@/redux/api/apiSlice";
+import { userLoggedIn } from "./authSlice";
 import Cookies from "js-cookie";
 
 export const authApi = apiSlice.injectEndpoints({
@@ -19,17 +19,18 @@ export const authApi = apiSlice.injectEndpoints({
             url: `https://shofy-backend.vercel.app/api/user/register/${token}`,
             method: "POST",
          }),
-         async onQueryStarted(arg, {queryFulfilled, dispatch}) {
+         async onQueryStarted(arg, { queryFulfilled, dispatch }) {
             try {
                const result = await queryFulfilled;
                // console.log("userInfo", result);
                Cookies.set(
                   "userInfo",
                   JSON.stringify({
+                     refreshToken: result.data.data.token,
                      accessToken: result.data.data.token,
                      user: result.data.data.user,
                   }),
-                  {expires: 0.5}
+                  { expires: 0.5 }
                );
                dispatch(
                   userLoggedIn({
@@ -50,18 +51,18 @@ export const authApi = apiSlice.injectEndpoints({
             method: "POST",
             body: data,
          }),
-
-         async onQueryStarted(arg, {queryFulfilled, dispatch}) {
+         async onQueryStarted(arg, { queryFulfilled, dispatch }) {
             try {
                const result = await queryFulfilled;
                // console.log("KPPPP ::::: ", result, " ||||| ", queryFulfilled);
                Cookies.set(
                   "userInfo",
                   JSON.stringify({
+                     refreshToken: result.data.data.data.tokens.refreshToken,
                      accessToken: result.data.data.data.tokens.accessToken,
                      user: result.data.data.data.user,
                   }),
-                  {expires: 0.5}
+                  { expires: 0.5 }
                );
                dispatch(
                   userLoggedIn({
@@ -74,10 +75,11 @@ export const authApi = apiSlice.injectEndpoints({
             }
          },
       }),
+
       // get me
       getUser: builder.query({
          query: () => "https://shofy-backend.vercel.app/api/user/me",
-         async onQueryStarted(arg, {queryFulfilled, dispatch}) {
+         async onQueryStarted(arg, { queryFulfilled, dispatch }) {
             try {
                const result = await queryFulfilled;
                dispatch(
@@ -90,23 +92,21 @@ export const authApi = apiSlice.injectEndpoints({
             }
          },
       }),
+
       // confirmEmail
       confirmEmail: builder.query({
          query: (token) => `https://shofy-backend.vercel.app/api/user/confirmEmail/${token}`,
-
-         async onQueryStarted(arg, {queryFulfilled, dispatch}) {
+         async onQueryStarted(arg, { queryFulfilled, dispatch }) {
             try {
                const result = await queryFulfilled;
-
                Cookies.set(
                   "userInfo",
                   JSON.stringify({
                      accessToken: result.data.data.token,
                      user: result.data.data.user,
                   }),
-                  {expires: 0.5}
+                  { expires: 0.5 }
                );
-
                dispatch(
                   userLoggedIn({
                      accessToken: result.data.data.token,
@@ -118,6 +118,7 @@ export const authApi = apiSlice.injectEndpoints({
             }
          },
       }),
+
       // reset password
       resetPassword: builder.mutation({
          query: (data) => ({
@@ -126,6 +127,7 @@ export const authApi = apiSlice.injectEndpoints({
             body: data,
          }),
       }),
+
       // confirmForgotPassword
       confirmForgotPassword: builder.mutation({
          query: (data) => ({
@@ -134,6 +136,7 @@ export const authApi = apiSlice.injectEndpoints({
             body: data,
          }),
       }),
+
       // change password
       changePassword: builder.mutation({
          query: (data) => ({
@@ -142,28 +145,26 @@ export const authApi = apiSlice.injectEndpoints({
             body: data,
          }),
       }),
-      
+
       // updateProfile password
       updateProfile: builder.mutation({
-         query: ({id, ...data}) => ({
+         query: ({ id, ...data }) => ({
             url: `https://shofy-backend.vercel.app/api/user/update-user/${id}`,
             method: "PUT",
             body: data,
          }),
 
-         async onQueryStarted(arg, {queryFulfilled, dispatch}) {
+         async onQueryStarted(arg, { queryFulfilled, dispatch }) {
             try {
                const result = await queryFulfilled;
-
                Cookies.set(
                   "userInfo",
                   JSON.stringify({
                      accessToken: result.data.data.token,
                      user: result.data.data.user,
                   }),
-                  {expires: 0.5}
+                  { expires: 0.5 }
                );
-
                dispatch(
                   userLoggedIn({
                      accessToken: result.data.data.token,
