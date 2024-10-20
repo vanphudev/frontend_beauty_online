@@ -1,5 +1,5 @@
 import React from "react";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import Link from "next/link";
 // internal
 import CheckoutBillingArea from "./checkout-billing-area";
@@ -9,11 +9,11 @@ import useCheckoutSubmit from "@/hooks/use-checkout-submit";
 
 const CheckoutArea = () => {
    const checkoutData = useCheckoutSubmit();
-   const {handleSubmit, submitHandler, register, errors, handleCouponCode, couponRef, couponApplyMsg} = checkoutData;
-   const {cart_products} = useSelector((state) => state.cart);
+   const { handleSubmit, submitHandler, register, errors, handleCouponCode, couponRef, couponApplyMsg } = checkoutData;
+   const { cart_products } = useSelector((state) => state.cart);
    return (
       <>
-         <section className='tp-checkout-area pb-120' style={{backgroundColor: "#EFF1F5"}}>
+         <section className='tp-checkout-area pb-120' style={{ backgroundColor: "#EFF1F5" }}>
             <div className='container'>
                {cart_products.length === 0 && (
                   <div className='text-center pt-50'>

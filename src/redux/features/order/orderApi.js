@@ -1,35 +1,17 @@
-import {apiSlice} from "../../api/apiSlice";
-import {set_client_secret} from "./orderSlice";
+import { apiSlice } from "../../api/apiSlice";
+import { set_client_secret } from "./orderSlice";
 
 export const authApi = apiSlice.injectEndpoints({
    overrideExisting: true,
    endpoints: (builder) => ({
-      // createPaymentIntent
-      createPaymentIntent: builder.mutation({
-         query: (data) => ({
-            url: "https://shofy-backend.vercel.app/api/order/create-payment-intent",
-            method: "POST",
-            body: data,
-         }),
-
-         async onQueryStarted(arg, {queryFulfilled, dispatch}) {
-            try {
-               const result = await queryFulfilled;
-               dispatch(set_client_secret(result.clientSecret));
-            } catch (err) {
-               // do nothing
-            }
-         },
-      }),
       // saveOrder
       saveOrder: builder.mutation({
          query: (data) => ({
-            url: "https://shofy-backend.vercel.app/api/order/saveOrder",
+            url: "http://localhost:5555/api/v1/orders/create",
             method: "POST",
             body: data,
          }),
-         invalidatesTags: ["UserOrders"],
-         async onQueryStarted(arg, {queryFulfilled, dispatch}) {
+         async onQueryStarted(arg, { queryFulfilled, dispatch }) {
             try {
                const result = await queryFulfilled;
                if (result) {
@@ -38,7 +20,7 @@ export const authApi = apiSlice.injectEndpoints({
                   localStorage.removeItem("shipping_info");
                }
             } catch (err) {
-               // do nothing
+               
             }
          },
       }),
@@ -51,7 +33,7 @@ export const authApi = apiSlice.injectEndpoints({
       // getUserOrders
       getUserOrderById: builder.query({
          query: (id) => `https://shofy-backend.vercel.app/api/user-order/${id}`,
-         providesTags: (result, error, arg) => [{type: "UserOrder", id: arg}],
+         providesTags: (result, error, arg) => [{ type: "UserOrder", id: arg }],
          keepUnusedDataFor: 600,
       }),
 
@@ -60,7 +42,7 @@ export const authApi = apiSlice.injectEndpoints({
          query: () => ` https://vapi.vnappmob.com/api/province/`,
       }),
 
-   // Call api Quận huyện
+      // Call api Quận huyện
       getApiDistrict: builder.query({
          query: (id) => `https://vapi.vnappmob.com/api/province/district/${id}`,
       }),
@@ -72,5 +54,5 @@ export const authApi = apiSlice.injectEndpoints({
    }),
 });
 
-export const {useCreatePaymentIntentMutation, useSaveOrderMutation, useGetUserOrderByIdQuery, useGetUserOrdersQuery, useGetApiProvinceQuery, useGetApiDistrictQuery, useGetApiWardQuery} =
+export const { useCreatePaymentIntentMutation, useSaveOrderMutation, useGetUserOrderByIdQuery, useGetUserOrdersQuery, useGetApiProvinceQuery, useGetApiDistrictQuery, useGetApiWardQuery } =
    authApi;

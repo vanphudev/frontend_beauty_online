@@ -5,6 +5,9 @@ import { useGetApiProvinceQuery, useGetApiDistrictQuery, useGetApiWardQuery } fr
 
 const CheckoutBillingArea = ({ register, errors }) => {
    const { user } = useSelector((state) => state.auth);
+   const [name, setName] = useState(user?.fullName ? user?.fullName : '');
+   const [email, setEmail] = useState(user?.email ? user?.email : "");
+   const [phone, setPhone] = useState(user?.phone ? user?.phone : "");
    const [selectedProvince, setSelectedProvince] = useState('');
    const [selectedDistrict, setSelectedDistrict] = useState('');
    const { data: provinces, isError: provinceError, isLoading: provinceLoading } = useGetApiProvinceQuery();
@@ -14,6 +17,15 @@ const CheckoutBillingArea = ({ register, errors }) => {
    const { data: wards, isError: wardError, isLoading: wardLoading } = useGetApiWardQuery(selectedDistrict, {
       skip: !selectedDistrict,
    });
+   const handleNameChange = (e) => {
+      setName(e.target.value);
+   };
+   const handleEmailChange = (e) => {
+      setEmail(e.target.value);
+   };
+   const handlePhoneChange = (e) => {
+      setPhone(e.target.value);
+   };
    const handleProvinceChange = (e) => {
       const provinceCode = e.target.value;
       setSelectedProvince(provinceCode);
@@ -42,9 +54,10 @@ const CheckoutBillingArea = ({ register, errors }) => {
                            id='name'
                            type='text'
                            placeholder='Nhập Tên của bạn'
-                           value={user?.fullName}
+                           value={name}
+                           onChange={handleNameChange}
                         />
-                        <ErrorMsg02 msg={errors?.lastName?.message} />
+                        <ErrorMsg02 msg={errors?.name?.message} />
                      </div>
                   </div>
                   <div className='col-md-12'>
@@ -57,19 +70,20 @@ const CheckoutBillingArea = ({ register, errors }) => {
                            type='text'
                            placeholder='Nhập số nhà và tên đường của bạn !'
                         />
+                        <ErrorMsg02 msg={errors?.address?.message} />
                      </div>
                   </div>
                   <div className='col-md-4'>
                      <div className='tp-checkout-input'>
                         <label>Tỉnh thành <span>*</span></label>
-                        <select {...register("province", { required: `Province is required!` })} id='province' onChange={handleProvinceChange} disabled={provinceLoading || provinceError}>
+                        <select {...register("province", { required: `Province is required!` })} id='province' name="province" onChange={handleProvinceChange} disabled={provinceLoading || provinceError}>
                            {provinceLoading ? (
-                              <option value=''>Đang tải...</option>
+                              <option >Đang tải...</option>
                            ) : provinceError ? (
-                              <option value=''>Lỗi dữ liệu</option>
+                              <option >Lỗi dữ liệu</option>
                            ) : (
                               <>
-                                 <option value=''>Chọn Tỉnh/Thành phố</option>
+                                 <option >Chọn Tỉnh/Thành phố</option>
                                  {provinces?.results.map((province) => (
                                     <option key={province.province_id} value={province.province_id}>
                                        {province.province_name}
@@ -78,12 +92,13 @@ const CheckoutBillingArea = ({ register, errors }) => {
                               </>
                            )}
                         </select>
+                        <ErrorMsg02 msg={errors?.province?.message} />
                      </div>
                   </div>
                   <div className='col-md-4'>
                      <div className='tp-checkout-input'>
                         <label>Quận/Huyện <span>*</span></label>
-                        <select {...register("district", { required: `District is required!` })} onChange={handleDistrictChange} disabled={!selectedProvince || districtLoading || districtError}>
+                        <select {...register("district", { required: `District is required!` })} onChange={handleDistrictChange} name="district" disabled={!selectedProvince || districtLoading || districtError}>
                            {!selectedProvince ? (
                               <option value=''>Chọn Quận/huyện</option>
                            ) : districtLoading ? (
@@ -101,12 +116,13 @@ const CheckoutBillingArea = ({ register, errors }) => {
                               </>
                            )}
                         </select>
+                        <ErrorMsg02 msg={errors?.district?.message} />
                      </div>
                   </div>
                   <div className='col-md-4'>
                      <div className='tp-checkout-input'>
                         <label>Xã/Phường <span>*</span></label>
-                        <select {...register("ward", { required: `Ward is required!` })} disabled={!selectedDistrict || wardLoading || wardError}>
+                        <select {...register("ward", { required: `Ward is required!` })} name="ward" disabled={!selectedDistrict || wardLoading || wardError}>
                            {!selectedDistrict ? (
                               <option value=''>Chọn Xã/Phường</option>
                            ) : wardLoading ? (
@@ -124,8 +140,8 @@ const CheckoutBillingArea = ({ register, errors }) => {
                               </>
                            )}
                         </select>
+                        <ErrorMsg02 msg={errors?.ward?.message} />
                      </div>
-                     <ErrorMsg02 msg={errors?.address?.message} />
                   </div>
                </div>
                <div className='col-md-12'>
@@ -141,7 +157,8 @@ const CheckoutBillingArea = ({ register, errors }) => {
                         id='contactNo'
                         type='text'
                         placeholder='Phone'
-                        value={user?.phone}
+                        value={phone}
+                        onChange={handlePhoneChange}
                      />
                      <ErrorMsg02 msg={errors?.contactNo?.message} />
                   </div>
@@ -157,7 +174,8 @@ const CheckoutBillingArea = ({ register, errors }) => {
                         id='email'
                         type='email'
                         placeholder='Email'
-                        value={user?.email}
+                        value={email}
+                        onChange={handleEmailChange}
                      />
                      <ErrorMsg02 msg={errors?.email?.message} />
                   </div>
