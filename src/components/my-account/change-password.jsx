@@ -1,51 +1,46 @@
 import React from "react";
+import Cookies from 'js-cookie';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import * as Yup from "yup";
-// internal
-import ErrorMsg from "../common/error-msg";
+import ErrorMsg02 from "../common/error-msg02";
 import { useChangePasswordMutation } from "@/redux/features/auth/authApi";
 import { notifyError, notifySuccess } from "@/utils/toast";
 
 // schema
 const schema = Yup.object().shape({
-  password: Yup.string().required().min(6).label("Password"),
+   password: Yup.string().required().min(6).label("Old Password"),
   newPassword: Yup.string().required().min(6).label("New Password"),
-  confirmPassword: Yup.string().oneOf(
-    [Yup.ref("newPassword"), null],
-    "Passwords must match"
-  ),
-});
-// schemaTwo
-const schemaTwo = Yup.object().shape({
-  newPassword: Yup.string().required().min(6).label("New Password"),
-  confirmPassword: Yup.string().oneOf(
-    [Yup.ref("newPassword"), null],
-    "Passwords must match"
-  ),
+  confirmPassword: Yup.string().required().min(6).label("Confirm Password")
 });
 
 const ChangePassword = () => {
   const { user } = useSelector((state) => state.auth);
   const [changePassword, {}] = useChangePasswordMutation();
-  // react hook form
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm({
-    resolver: yupResolver(user?.googleSignIn ? schemaTwo : schema),
+    resolver: yupResolver(schema),
   });
 
-  // on submit
+
   const onSubmit = (data) => {
+      const isAuthenticate = Cookies.get("userInfo");
+   if (!isAuthenticate) {
+      router.push("/login")
+      notifyError("Bạn chưa đăng nhập !");
+      return;
+   };
     changePassword({
-      email: user?.email,
-      password: data.password,
+      id: user?._id,
+      oldPassword: data.password,
       newPassword: data.newPassword,
-      googleSignIn: user?.googleSignIn,
+      confirmPassword: data.confirmPassword,
     }).then((result) => {
       if (result?.error) {
         notifyError(result?.error?.data?.message);
@@ -59,8 +54,7 @@ const ChangePassword = () => {
     <div className="profile__password">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="row">
-          {!user?.googleSignIn && (
-            <div className="col-xxl-12">
+          <div className="col-xxl-12">
               <div className="tp-profile-input-box">
                 <div className="tp-contact-input">
                   <input
@@ -75,10 +69,9 @@ const ChangePassword = () => {
                 <div className="tp-profile-input-title">
                   <label htmlFor="password">Old Password</label>
                 </div>
-                <ErrorMsg msg={errors.password?.message} />
+                <ErrorMsg02 msg={errors.password?.message} />
               </div>
             </div>
-          )}
           <div className="col-xxl-6 col-md-6">
             <div className="tp-profile-input-box">
               <div className="tp-profile-input">
@@ -94,14 +87,16 @@ const ChangePassword = () => {
               <div className="tp-profile-input-title">
                 <label htmlFor="new_pass">New Password</label>
               </div>
-              <ErrorMsg msg={errors.newPassword?.message} />
+              <ErrorMsg02 msg={errors.newPassword?.message} />
             </div>
           </div>
           <div className="col-xxl-6 col-md-6">
             <div className="tp-profile-input-box">
               <div className="tp-profile-input">
                 <input
-                  {...register("confirmPassword")}
+                  {...register("confirmPassword", {
+                    required: `Confirm Password is required!`,
+                  })}
                   name="confirmPassword"
                   id="confirmPassword"
                   type="password"
@@ -110,7 +105,7 @@ const ChangePassword = () => {
               <div className="tp-profile-input-title">
                 <label htmlFor="confirmPassword">Confirm Password</label>
               </div>
-              <ErrorMsg msg={errors.confirmPassword?.message} />
+              <ErrorMsg02 msg={errors.confirmPassword?.message} />
             </div>
           </div>
           <div className="col-xxl-6 col-md-6">

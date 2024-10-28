@@ -1,17 +1,17 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import SEO from "@/components/seo";
 import Wrapper from "@/layout/wrapper";
 import Header from "@/layout/headers/header";
 import ShopBreadcrumb from "@/components/breadcrumb/shop-breadcrumb";
 import ShopArea from "@/components/shop/shop-area";
-import {useGetAllProductsQuery} from "@/redux/features/productApi";
+import { useGetAllProductsQuery } from "@/redux/features/productApi";
 import ErrorMsg from "@/components/common/error-msg";
 import Footer from "@/layout/footers/footer";
 import ShopFilterOffCanvas from "@/components/common/shop-filter-offcanvas";
 import ShopLoader from "@/components/loader/shop/shop-loader";
 
-const ShopPage = ({query}) => {
-   const {data: products, isError, isLoading} = useGetAllProductsQuery();
+const ShopPage = ({ query }) => {
+   const { data: products, isError, isLoading } = useGetAllProductsQuery();
    const [priceValue, setPriceValue] = useState([0, 0]);
    const [selectValue, setSelectValue] = useState("");
    const [currPage, setCurrPage] = useState(1);
@@ -96,21 +96,19 @@ const ShopPage = ({query}) => {
          }
       }
 
-// category filter
-if (query.category) {
-   product_items = product_items.filter(
-      (p) => p.categoryId?.url?.toLowerCase().replace("&", "").split(" ").join("-") === query.category
-   );
-}
+      // category filter
+      if (query.category) {
+         product_items = product_items.filter(
+            (p) => p.categoryId?.url?.toLowerCase().replace("&", "").split(" ").join("-") === query.category
+         );
+      }
 
-// brand filter
-if (query.brand) {
-   product_items = product_items.filter(
-      (p) => p.brandId?.url?.toLowerCase().replace("&", "").split(" ").join("-") === query.brand
-   );
-}
-
-
+      // brand filter
+      if (query.brand) {
+         product_items = product_items.filter(
+            (p) => p.brandId?.url?.toLowerCase().replace("&", "").split(" ").join("-") === query.brand
+         );
+      }
       content = (
          <>
             <ShopArea all_products={products?.data?.products} products={product_items} otherProps={otherProps} />
@@ -123,7 +121,7 @@ if (query.brand) {
          <SEO pageTitle='Sản phẩm' />
          <Header />
          <ShopBreadcrumb title='Danh sách sản phẩm' subtitle='Danh sách sản phẩm' />
-         {content}
+         {content ? content : ""}
          <Footer primary_style={true} />
       </Wrapper>
    );
@@ -132,7 +130,7 @@ if (query.brand) {
 export default ShopPage;
 
 export const getServerSideProps = async (context) => {
-   const {query} = context;
+   const { query } = context;
 
    return {
       props: {

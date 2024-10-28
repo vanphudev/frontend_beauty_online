@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Cookies from 'js-cookie';
 import { Rating } from "react-simple-star-rating";
 import dayjs from "dayjs";
-import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from "react-redux";
 import Dotdotdot from "react-dotdotdot";
 import { Cart, QuickView } from "@/svg";
 import Timer from "@/components/common/timer";
 import { handleProductModal } from "@/redux/features/productModalSlice";
+import { useRouter } from 'next/router';
 import {
    load_cart_products,
 } from "@/redux/features/cartSlice";
@@ -33,7 +34,6 @@ const ProductItem = ({ product, offer_style = false }) => {
 
 
    const router = useRouter();
-
    const [addToCart, { }] = useAddToCartMutation();
    const { cart_products } = useSelector((state) => state.cart);
    const { data: cartData, refetch } = useGetCartByUserQuery();
@@ -58,21 +58,20 @@ const ProductItem = ({ product, offer_style = false }) => {
 
    const addProductToCart = async (product) => {
       try {
+         const isAuthenticate = Cookies.get("userInfo");
+         if (!isAuthenticate) {
+            router.push("/login")
+            notifyError("Bạn chưa đăng nhập !");
+            return;
+         };
+
          const data = await addToCart({
             productId: product._id,
             quantity: 1,
          });
 
-         console.log("data", data);
-
          if (data?.error) {
-            notifyError(data.error.data.message);
-            return;
-         }
-
-         if (data.error?.data.code === 405) {
-            notifyError(data.error.data.message);
-            router.push("/login");
+            notifyError("Thêm sản phẩm thất bại !");
             return;
          }
 
@@ -88,11 +87,11 @@ const ProductItem = ({ product, offer_style = false }) => {
    useEffect(() => {
       if (cartData) {
          const cart_products = cartData?.data?.cart?.items || [];
-         dispatch(load_cart_products(cart_products)); // Cập nhật Redux với giỏ hàng mới
+         dispatch(load_cart_products(cart_products));
       }
    }, [cartData, dispatch]);
 
-   
+
    return (
       <>
          <div className={`${offer_style ? "tp-product-offer-item" : "mb-25"} tp-product-item transition-3`}>

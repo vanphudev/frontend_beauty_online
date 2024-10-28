@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from "react";
+import React, {useRef, useEffect, useState} from "react";
 import ReviewForm from "../forms/review-form";
 import ReviewItem from "./review-item";
 
@@ -21,6 +21,13 @@ const DetailsTabNav = ({product}) => {
    } = product || {};
    const activeRef = useRef(null);
    const marker = useRef(null);
+
+   const {renderCompnent, setRenderCompnent} = useState(0)
+
+   const handleRenderCompnent = () =>{
+      setRenderCompnent(!renderCompnent);
+   }
+
    // handleActive
    const handleActive = (e) => {
       if (e.target.classList.contains("active")) {
@@ -141,11 +148,8 @@ const DetailsTabNav = ({product}) => {
                         </div>
                         <div className='col-lg-6'>
                            <div className='tp-product-details-review-form'>
-                              <h3 className='tp-product-details-review-form-title'>Review this product</h3>
-                              <p>Your email address will not be published. Required fields are marked *</p>
-                              {/* form start */}
-                              <ReviewForm product_id={_id} />
-                              {/* form end */}
+                              <h3 className='tp-product-details-review-form-title mb-3'>Đánh giá sản phẩm</h3>
+                              <ReviewForm product_id={_id} handleRenderCompnent={handleRenderCompnent}/>
                            </div>
                         </div>
                      </div>

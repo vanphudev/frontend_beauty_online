@@ -87,7 +87,7 @@ const ProductDetailsArea = ({productItem}) => {
                   </div>
                </div>
                <div className='row'>
-                  <RelatedProducts id={_id} />
+                  
                </div>
             </div>
          </section>

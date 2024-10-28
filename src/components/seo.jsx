@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-const SEO = ({pageTitle}) => (
+const SEO = ({ pageTitle }) => (
    <>
       <Head>
          <title>{pageTitle && `${pageTitle} - Website Mỹ Phẩm`}</title>

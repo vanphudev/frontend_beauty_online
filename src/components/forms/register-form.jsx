@@ -1,13 +1,13 @@
-import React, {useState} from "react";
-import {useForm} from "react-hook-form";
-import {yupResolver} from "@hookform/resolvers/yup";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 // internal
-import {CloseEye, OpenEye} from "@/svg";
+import { CloseEye, OpenEye } from "@/svg";
 import ErrorMsg02 from "../common/error-msg02";
-import {notifyError, notifySuccess} from "@/utils/toast";
-import {useRegisterUserMutation} from "@/redux/features/auth/authApi";
+import { notifyError, notifySuccess } from "@/utils/toast";
+import { useRegisterUserMutation } from "@/redux/features/auth/authApi";
 
 // schema
 const schema = Yup.object().shape({
@@ -15,29 +15,26 @@ const schema = Yup.object().shape({
    email: Yup.string().required().email().label("Email"),
    password: Yup.string().required().min(6).label("Password"),
    phone: Yup.string()
-  .required("Phone is required")
-  .matches(/^\d{10,12}$/, "Phone must be between 10 and 12 digits") // Kiểm tra số điện thoại có từ 10-12 chữ số
-  .label("Phone"),
-   remember: Yup.bool()
-      .oneOf([true], "You must agree to the terms and conditions to proceed.")
-      .label("Terms and Conditions"),
+      .required("Phone is required")
+      .matches(/^\d{10,12}$/, "Phone must be between 10 and 12 digits") // Kiểm tra số điện thoại có từ 10-12 chữ số
+      .label("Phone"),
 });
 
 const RegisterForm = () => {
    const [showPass, setShowPass] = useState(false);
-   const [registerUser, {}] = useRegisterUserMutation();
+   const [registerUser, { }] = useRegisterUserMutation();
    const router = useRouter();
-   const {redirect} = router.query;
+   const { redirect } = router.query;
    // react hook form
    const {
       register,
       handleSubmit,
-      formState: {errors},
+      formState: { errors },
       reset,
    } = useForm({
       resolver: yupResolver(schema),
    });
-   // on submit
+
    const onSubmit = (data) => {
       registerUser({
          fullName: data.name,
@@ -45,10 +42,12 @@ const RegisterForm = () => {
          password: data.password,
          phone: data.phone
       }).then((result) => {
+         console.log("result", result);
          if (result?.error) {
-            notifyError("Register Failed");
+            notifyError(result?.error.data.message);
          } else {
             notifySuccess(result?.data?.message);
+            router.push(redirect || "/login");
          }
       });
       reset();
@@ -59,7 +58,7 @@ const RegisterForm = () => {
             <div className='tp-login-input-box'>
                <div className='tp-login-input'>
                   <input
-                     {...register("name", {required: `Name is required!`})}
+                     {...register("name", { required: `Name is required!` })}
                      id='name'
                      name='name'
                      type='text'
@@ -74,7 +73,7 @@ const RegisterForm = () => {
             <div className='tp-login-input-box'>
                <div className='tp-login-input'>
                   <input
-                     {...register("phone", {required: `Phone is required!`})}
+                     {...register("phone", { required: `Phone is required!` })}
                      id='phone'
                      name='phone'
                      type='text'
@@ -89,7 +88,7 @@ const RegisterForm = () => {
             <div className='tp-login-input-box'>
                <div className='tp-login-input'>
                   <input
-                     {...register("email", {required: `Email is required!`})}
+                     {...register("email", { required: `Email is required!` })}
                      id='email'
                      name='email'
                      type='email'
@@ -105,7 +104,7 @@ const RegisterForm = () => {
                <div className='p-relative'>
                   <div className='tp-login-input'>
                      <input
-                        {...register("password", {required: `Password is required!`})}
+                        {...register("password", { required: `Password is required!` })}
                         id='password'
                         name='password'
                         type={showPass ? "text" : "password"}
@@ -124,24 +123,8 @@ const RegisterForm = () => {
                <ErrorMsg02 msg={errors.password?.message} />
             </div>
          </div>
-         <div className='tp-login-suggetions d-sm-flex align-items-center justify-content-between mb-20'>
-            <div className='tp-login-remeber'>
-               <input
-                  {...register("remember", {
-                     required: `Terms and Conditions is required!`,
-                  })}
-                  id='remember'
-                  name='remember'
-                  type='checkbox'
-               />
-               <label htmlFor='remember'>
-                  I accept the terms of the Service & <a href='#'>Privacy Policy</a>.
-               </label>
-               <ErrorMsg02 msg={errors.remember?.message} />
-            </div>
-         </div>
-         <div className='tp-login-bottom'>
-            <button type='submit' className='tp-login-btn w-100'>
+         <div className='tp-login-bottom mt-4'>
+            <button id="signup" type='submit' className='tp-login-btn w-100'>
                Sign Up
             </button>
          </div>

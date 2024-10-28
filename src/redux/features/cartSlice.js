@@ -1,6 +1,6 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {notifyError} from "@/utils/toast";
-import {apiSlice} from "../api/apiSlice";
+import { createSlice } from "@reduxjs/toolkit";
+import { notifyError } from "@/utils/toast";
+import { apiSlice } from "../api/apiSlice";
 
 const initialState = {
    cart_products: [],
@@ -15,10 +15,10 @@ export const cartSlice = createSlice({
       remove_cart_products: (state) => {
          state.cart_products = [];
       },
-      get_cart_products: (state, {payload}) => {
+      get_cart_products: (state, { payload }) => {
          state.cart_products = payload;
       },
-      load_cart_products: (state, {payload}) => {
+      load_cart_products: (state, { payload }) => {
          state.cart_products = payload;
       },
       openCartMini: (state) => {
@@ -28,8 +28,8 @@ export const cartSlice = createSlice({
          state.cartMiniOpen = false;
       },
       initialOrderQuantity: (state, { payload }) => {
-      state.orderQuantity = 1;
-    },
+         state.orderQuantity = 1;
+      },
    },
 });
 
@@ -55,31 +55,31 @@ export const cartApi = apiSlice.injectEndpoints({
          }),
       }),
       addToCart: builder.mutation({
-         query: ({productId, quantity}) => ({
+         query: ({ productId, quantity }) => ({
             url: "http://localhost:5555/api/v1/carts/additem",
             method: "POST",
-            body: {productId, quantity},
+            body: { productId, quantity },
          }),
       }),
-      increaseProductQuantity:  builder.mutation({
-         query: ({productId}) => ({
+      increaseProductQuantity: builder.mutation({
+         query: ({ productId }) => ({
             url: "http://localhost:5555/api/v1/carts/increaseQuantity",
             method: "PUT",
-            body: {productId},
+            body: { productId },
          }),
       }),
-       decreaseProductQuantity:  builder.mutation({
-         query: ({productId}) => ({
+      decreaseProductQuantity: builder.mutation({
+         query: ({ productId }) => ({
             url: "http://localhost:5555/api/v1/carts/decreasequantity",
             method: "PUT",
-            body: {productId},
+            body: { productId },
          }),
       }),
       removeFromCart: builder.mutation({
-         query: ({clientId, productId}) => ({
+         query: ({ clientId, productId }) => ({
             url: "http://localhost:5555/api/v1/carts/removeitem",
             method: "DELETE",
-            body: {productId},
+            body: { productId },
          }),
       }),
       clearCart: builder.mutation({

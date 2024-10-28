@@ -1,13 +1,13 @@
 import * as dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {  useElements, useStripe } from "@stripe/react-stripe-js";
+import { useElements, useStripe } from "@stripe/react-stripe-js";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import useCartInfo from "./use-cart-info";
 import { set_shipping } from "@/redux/features/order/orderSlice";
 import { notifyError, notifySuccess } from "@/utils/toast";
-import {  useSaveOrderMutation } from "@/redux/features/order/orderApi";
+import { useSaveOrderMutation } from "@/redux/features/order/orderApi";
 import { useCheckVoucherMutation } from "@/redux/features/coupon/couponApi";
 
 const useCheckoutSubmit = () => {
@@ -24,7 +24,7 @@ const useCheckoutSubmit = () => {
    // total amount
    const { total, setTotal } = useCartInfo();
 
-   const [cartTotal, setCartTotal]  =  useState(0);
+   const [cartTotal, setCartTotal] = useState(0);
    // couponInfo
    const [couponInfo, setCouponInfo] = useState({});
    // discountAmount
@@ -48,9 +48,9 @@ const useCheckoutSubmit = () => {
 
    useEffect(() => {
       let discountAmount = 0;
-      if(couponInfo){
-         const discountValue = Number(couponInfo?.discountValue) || 0; 
-          discountAmount = Number(total * (discountValue / 100));
+      if (couponInfo) {
+         const discountValue = Number(couponInfo?.discountValue) || 0;
+         discountAmount = Number(total * (discountValue / 100));
       }
       setDiscountAmount(discountAmount);
       let finalPrice = total - discountAmount;
@@ -83,7 +83,7 @@ const useCheckoutSubmit = () => {
                }, 5000);
             }
          });
-      }else{
+      } else {
          notifyError("Vui lòng nhập mã giảm giá nếu có !");
          return;
       }
@@ -91,25 +91,21 @@ const useCheckoutSubmit = () => {
 
    //set values
    useEffect(() => {
-      setValue("name", shipping_info.name);
-      setValue("address", shipping_info.address);
-      setValue("province", shipping_info.province);
-      setValue("district", shipping_info.district);
-      setValue("ward", shipping_info.ward);
-      setValue("contactNo", shipping_info.contactNo);
-      setValue("email", shipping_info.email);
-      setValue("orderNote", shipping_info.orderNote);
+      setValue("name", user.fullName);
+      setValue("contactNo", user.phone);
+      setValue("email", user.email);
+      setValue("orderNote", "");
    }, [user, setValue, shipping_info, router]);
 
    // submitHandler
    const submitHandler = async (data) => {
       setIsCheckoutSubmit(true);
       const details_products = cart_products?.map((item) => ({
-    productId: item.productId._id, 
-    name: item.productId.name,      
-    price: item.productId.price,    
-    quantity: item.quantity         
-})) || []; 
+         productId: item.productId._id,
+         name: item.productId.name,
+         price: item.productId.price,
+         quantity: item.quantity
+      })) || [];
       let orderInfo = {
          name: data.name,
          shippingAddress: {
@@ -129,7 +125,6 @@ const useCheckoutSubmit = () => {
          finalPrice: cartTotal,
          note: data.orderNote,
       };
-      console.log("orderInfo", orderInfo);
       if (data.payment === "COD") {
          saveOrder({
             ...orderInfo,

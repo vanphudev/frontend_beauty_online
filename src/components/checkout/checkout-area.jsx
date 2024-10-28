@@ -7,7 +7,7 @@ import CheckoutCoupon from "./checkout-coupon";
 import CheckoutOrderArea from "./checkout-order-area";
 import useCheckoutSubmit from "@/hooks/use-checkout-submit";
 
-const CheckoutArea = () => {
+const CheckoutArea =  () => {
    const checkoutData = useCheckoutSubmit();
    const { handleSubmit, submitHandler, register, errors, handleCouponCode, couponRef, couponApplyMsg } = checkoutData;
    const { cart_products } = useSelector((state) => state.cart);
@@ -37,7 +37,7 @@ const CheckoutArea = () => {
                      <form onSubmit={handleSubmit(submitHandler)}>
                         <div className='row'>
                            <div className='col-lg-7'>
-                              <CheckoutBillingArea register={register} errors={errors} />
+                              <CheckoutBillingArea register={register} errors={errors}  />
                            </div>
                            <div className='col-lg-5'>
                               <CheckoutOrderArea checkoutData={checkoutData} />

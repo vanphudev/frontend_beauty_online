@@ -20,21 +20,21 @@ export const authApi = apiSlice.injectEndpoints({
                   localStorage.removeItem("shipping_info");
                }
             } catch (err) {
-               
+
             }
          },
       }),
+
       // getUserOrders
       getUserOrders: builder.query({
          query: () => `https://shofy-backend.vercel.app/api/user-order`,
          providesTags: ["UserOrders"],
          keepUnusedDataFor: 600,
       }),
+
       // getUserOrders
       getUserOrderById: builder.query({
-         query: (id) => `https://shofy-backend.vercel.app/api/user-order/${id}`,
-         providesTags: (result, error, arg) => [{ type: "UserOrder", id: arg }],
-         keepUnusedDataFor: 600,
+         query: (id) => `http://localhost:5555/api/v1/orders/getbyid?id=${id}`,
       }),
 
       // Call api tỉnh thành
@@ -47,12 +47,21 @@ export const authApi = apiSlice.injectEndpoints({
          query: (id) => `https://vapi.vnappmob.com/api/province/district/${id}`,
       }),
 
-      // Call api xã phường 
+
       getApiWard: builder.query({
          query: (id) => ` https://vapi.vnappmob.com/api/province/ward/${id}`,
       }),
+
+      checkProductBought: builder.mutation({
+         query: (data) => ({
+            url: "http://localhost:5555/api/v1/orders/checkproduct",
+            method: "POST",
+            body: data,
+         }),
+      }),
+
    }),
 });
 
-export const { useCreatePaymentIntentMutation, useSaveOrderMutation, useGetUserOrderByIdQuery, useGetUserOrdersQuery, useGetApiProvinceQuery, useGetApiDistrictQuery, useGetApiWardQuery } =
+export const { useCreatePaymentIntentMutation, useSaveOrderMutation, useGetUserOrderByIdQuery, useGetUserOrdersQuery, useGetApiProvinceQuery, useGetApiDistrictQuery, useGetApiWardQuery, useCheckProductBoughtMutation } =
    authApi;

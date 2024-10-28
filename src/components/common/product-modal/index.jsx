@@ -55,7 +55,6 @@ const ProductModal = () => {
                      className='tp-product-modal-close-btn'>
                      <i className='fa-regular fa-xmark'></i>
                   </button>
-                  {/* product-details-thumb-wrapper start */}
                   <DetailsThumbWrapper
                      activeImg={activeImg}
                      handleImageActive={handleImageActive}
@@ -65,14 +64,11 @@ const ProductModal = () => {
                      loading={loading}
                      status={inventory}
                   />
-                  {/* product-details-thumb-wrapper end */}
-                  {/* product-details-wrapper start */}
                   <DetailsWrapper
                      productItem={productItem}
                      handleImageActive={handleImageActive}
                      activeImg={activeImg}
                   />
-                  {/* product-details-wrapper end */}
                </div>
             </div>
          </ReactModal>

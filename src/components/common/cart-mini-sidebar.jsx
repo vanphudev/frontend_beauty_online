@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Cookies from 'js-cookie';
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import useCartInfo from "@/hooks/use-cart-info";
@@ -9,6 +10,7 @@ import { closeCartMini, load_cart_products } from "@/redux/features/cartSlice";
 import { useRemoveFromCartMutation, useGetCartByUserQuery } from "@/redux/features/cartSlice";
 import formatCurrency from "@/lib/funcMoney";
 import { notifySuccess, notifyError } from "@/utils/toast";
+import { useRouter } from 'next/router';
 
 const CartMiniSidebar = () => {
    const { cart_products, cartMiniOpen } = useSelector((state) => state.cart);
@@ -17,12 +19,20 @@ const CartMiniSidebar = () => {
    const { total } = useCartInfo();
    const dispatch = useDispatch();
 
+   const router = useRouter();
    const handleRemovePrd = (prd) => {
       removeProductCartById(prd);
    };
 
    const removeProductCartById = async (product) => {
       try {
+         const isAuthenticate = Cookies.get("userInfo");
+         if (!isAuthenticate) {
+            router.push("/login")
+            notifyError("Bạn chưa đăng nhập !");
+            return;
+         };
+
          const data = await removeToCart({
             productId: product._id,
          });
@@ -30,27 +40,21 @@ const CartMiniSidebar = () => {
          if (data?.error) {
             notifyError(data.error.data.message);
             return;
-         }
-
-         if (data.error?.data.code === 405) {
-            notifyError(data.error.data.message);
-            router.push("/login");
-            return;
-         }
-
+          }
+  
          if (data.data.status === 200) {
             refetch();
             notifySuccess("Xóa sản phẩm khỏi giỏ hàng thành công !");
          }
       } catch (error) {
-         notifyError("Đã xảy ra lỗi khi xóa sản phẩm ra khỏi giỏ hàng.", error);
+         notifyError("Đã xảy ra lỗi khi xóa sản phẩm ra khỏi giỏ hàng." + error);
       }
    }
 
    useEffect(() => {
       if (cartData) {
          const cart_products = cartData?.data?.cart?.items || [];
-         dispatch(load_cart_products(cart_products)); // Cập nhật Redux với giỏ hàng mới
+         dispatch(load_cart_products(cart_products)); 
       }
    }, [cartData, dispatch]);
 
@@ -112,7 +116,7 @@ const CartMiniSidebar = () => {
                                  </div>
                               </div>
                               <a
-                                 onClick={() => handleRemovePrd(item)}
+                                 onClick={() => handleRemovePrd(item?.productId)}
                                  className='cartmini__del cursor-pointer'>
                                  <i className='fa-regular fa-xmark'></i>
                               </a>

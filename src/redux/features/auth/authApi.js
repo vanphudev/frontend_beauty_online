@@ -140,7 +140,7 @@ export const authApi = apiSlice.injectEndpoints({
       // change password
       changePassword: builder.mutation({
          query: (data) => ({
-            url: "https://shofy-backend.vercel.app/api/user/change-password",
+            url: "http://localhost:5555/api/v1/user/change-password",
             method: "PATCH",
             body: data,
          }),
@@ -149,9 +149,9 @@ export const authApi = apiSlice.injectEndpoints({
       // updateProfile password
       updateProfile: builder.mutation({
          query: ({ id, ...data }) => ({
-            url: `https://shofy-backend.vercel.app/api/user/update-user/${id}`,
+            url: `http://localhost:5555/api/v1/user/update`,
             method: "PUT",
-            body: data,
+            body: { id, ...data },
          }),
 
          async onQueryStarted(arg, { queryFulfilled, dispatch }) {
@@ -160,15 +160,16 @@ export const authApi = apiSlice.injectEndpoints({
                Cookies.set(
                   "userInfo",
                   JSON.stringify({
-                     accessToken: result.data.data.token,
-                     user: result.data.data.user,
+                     refreshToken: result.data.data.data.tokens.refreshToken,
+                     accessToken: result.data.data.data.tokens.accessToken,
+                     user: result.data.data.data.user,
                   }),
                   { expires: 0.5 }
                );
                dispatch(
                   userLoggedIn({
-                     accessToken: result.data.data.token,
-                     user: result.data.data.user,
+                     accessToken: result.data.data.data.tokens.accessToken,
+                     user: result.data.data.data.user,
                   })
                );
             } catch (err) {

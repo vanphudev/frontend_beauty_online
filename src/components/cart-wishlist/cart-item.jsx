@@ -13,7 +13,7 @@ const CartItem = ({ product }) => {
    const { data: cartData, refetch } = useGetCartByUserQuery();
    const [increaseProductQuantity, { }] = useIncreaseProductQuantityMutation();
    const [decreaseProductQuantity, { }] = useDecreaseProductQuantityMutation();
-    const [removeToCart, { }] = useRemoveFromCartMutation();
+   const [removeToCart, { }] = useRemoveFromCartMutation();
    const dispatch = useDispatch();
 
    const handleIncrease = (prd) => {
@@ -74,14 +74,14 @@ const CartItem = ({ product }) => {
       }
    }
 
-    const handleRemovePrd = (prd) => {
+   const handleRemovePrd = (prd) => {
       removeProductCartById(prd);
    };
 
    const removeProductCartById = async (product) => {
-try {
+      try {
          const data = await removeToCart({
-            productId: product._id,
+            productId: product?.productId?._id,
          });
 
          if (data?.error) {
@@ -103,7 +103,7 @@ try {
          notifyError("Đã xảy ra lỗi khi xóa sản phẩm ra khỏi giỏ hàng.", error);
       }
    }
-   
+
 
    useEffect(() => {
       if (cartData) {
@@ -141,27 +141,27 @@ try {
             </div>
          </td>
          {/* action */}
-<td
-  className='tp-cart-action'
->
-  <button
-    onClick={() => handleRemovePrd(product)}
-    style={{
-      backgroundColor: '#ff4d4f', // Màu nền đỏ
-      color: '#fff',              // Màu chữ trắng
-      border: 'none',             // Không có viền
-      borderRadius: '5px',        // Bo tròn các góc
-      padding: '8px 16px',        // Khoảng cách bên trong nút
-      fontSize: '16px',           // Kích thước chữ
-      cursor: 'pointer',          // Hiệu ứng con trỏ khi hover
-      transition: 'background-color 0.3s ease', // Hiệu ứng chuyển màu
-    }}
-    onMouseEnter={(e) => (e.target.style.backgroundColor = '#ff7875')} // Hiệu ứng hover
-    onMouseLeave={(e) => (e.target.style.backgroundColor = '#ff4d4f')} // Trở về màu ban đầu
-  >
-    <span>Xóa</span>
-  </button>
-</td>
+         <td
+            className='tp-cart-action'
+         >
+            <button
+               onClick={() => handleRemovePrd(product)}
+               style={{
+                  backgroundColor: '#ff4d4f', // Màu nền đỏ
+                  color: '#fff',              // Màu chữ trắng
+                  border: 'none',             // Không có viền
+                  borderRadius: '5px',        // Bo tròn các góc
+                  padding: '8px 16px',        // Khoảng cách bên trong nút
+                  fontSize: '16px',           // Kích thước chữ
+                  cursor: 'pointer',          // Hiệu ứng con trỏ khi hover
+                  transition: 'background-color 0.3s ease', // Hiệu ứng chuyển màu
+               }}
+               onMouseEnter={(e) => (e.target.style.backgroundColor = '#ff7875')} // Hiệu ứng hover
+               onMouseLeave={(e) => (e.target.style.backgroundColor = '#ff4d4f')} // Trở về màu ban đầu
+            >
+               <span>Xóa</span>
+            </button>
+         </td>
       </tr>
    );
 };

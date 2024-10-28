@@ -12,7 +12,6 @@ import PrdDetailsLoader from "@/components/loader/prd-details-loader";
 
 const ProductDetailsPage = ({query}) => {
    const {data: product, isLoading, isError} = useGetProductQuery(query.id);
-   // decide what to render
    let content = null;
    if (isLoading) {
       content = <PrdDetailsLoader loading={isLoading} />;

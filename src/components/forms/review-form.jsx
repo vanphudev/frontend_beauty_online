@@ -1,32 +1,31 @@
 import React, { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import Cookies from 'js-cookie';
 import { useSelector } from "react-redux";
 import { Rating } from "react-simple-star-rating";
 import * as Yup from "yup";
-// internal
+import { useRouter } from "next/router";
 import ErrorMsg02 from "../common/error-msg02";
 import { useAddReviewMutation } from "@/redux/features/reviewApi";
 import { notifyError, notifySuccess } from "@/utils/toast";
+import { useCheckProductBoughtMutation } from "@/redux/features/order/orderApi"
 
 // schema
 const schema = Yup.object().shape({
-   name: Yup.string().required().label("Name"),
-   email: Yup.string().required().email().label("Email"),
-   review: Yup.string().required().label("Comment"),
+   comment: Yup.string().required().label("Comment"),
 });
 
-const ReviewForm = ({ product_id }) => {
+const ReviewForm = ({ product_id, handleRenderCompnent }) => {
    const { user } = useSelector((state) => state.auth);
-   const [rating, setRating] = useState(0);
+   const [rating, setRating] = useState(5);
+   const [checkProductBought, { }] = useCheckProductBoughtMutation();
    const [addReview, { }] = useAddReviewMutation();
-
-   // Catch Rating value
+   const router = useRouter();
    const handleRating = (rate) => {
       setRating(rate);
    };
 
-   // react hook form
    const {
       register,
       handleSubmit,
@@ -35,35 +34,61 @@ const ReviewForm = ({ product_id }) => {
    } = useForm({
       resolver: yupResolver(schema),
    });
-   // on submit
-   const onSubmit = (data) => {
-      if (!user) {
-         notifyError("Please login first");
+
+   const onSubmit = async (data) => {
+      const isAuthenticate = Cookies.get("userInfo");
+      if (!isAuthenticate) {
+         router.push("/login")
+         notifyError("Bạn chưa đăng nhập !");
          return;
-      } else {
-         addReview({
+      };
+
+      try {
+         const result = await checkProductBought({ productId: product_id });
+         if (result?.error) {
+            notifyError(result?.error?.data?.message);
+            return;
+         }
+
+         if (!result?.data?.isBought) {
+            notifyError("Bạn không được phép đánh giá sản phẩm chưa Order !");
+            return;
+         }
+
+         const reviewResult = await addReview({
             userId: user?._id,
             productId: product_id,
             rating: rating,
             comment: data.comment,
-         }).then((result) => {
-            if (result?.error) {
-               notifyError(result?.error?.data?.message);
-            } else {
-               notifySuccess(result?.data?.message);
-            }
          });
+
+         if (reviewResult?.error) {
+            notifyError(reviewResult?.error?.data?.message);
+         } else if (reviewResult?.data?.isRated) {
+            notifySuccess(`Đánh giá sản phẩm ${reviewResult?.data?.product?.name} thành công !`);
+            handleRenderCompnent();
+         }
+      } catch (error) {
+         notifyError("Có lỗi xảy ra!");
+      } finally {
+         reset();
       }
-      reset();
    };
 
    return (
       <form onSubmit={handleSubmit(onSubmit)}>
-         <div className='tp-product-details-review-form-rating d-flex align-items-center'>
-            <p>Đánh giá: </p>
+         <div className='tp-product-details-review-form-rating d-flex align-items-center gap-2 '>
+            <h5 className='m-0'>Số sao: </h5>
             <div className='tp-product-details-review-form-rating-icon d-flex align-items-center'>
-               <Rating onClick={handleRating} allowFraction size={16} initialValue={rating} />
+               <Rating
+                  onClick={handleRating}
+                  allowFraction
+                  size={25}
+                  initialValue={rating}
+                  fractions={2}
+               />
             </div>
+            <ErrorMsg02 msg={rating <= 0 ? "Rating is a required field" : ""} />
          </div>
          <div className='tp-product-details-review-input-wrapper'>
             <div className='tp-product-details-review-input-box'>
@@ -78,42 +103,12 @@ const ReviewForm = ({ product_id }) => {
                <div className='tp-product-details-review-input-title'>
                   <label htmlFor='msg'>Đánh gía của bạn</label>
                </div>
-               <ErrorMsg02 msg={errors.name?.comment} />
-            </div>
-            <div className='tp-product-details-review-input-box'>
-               <div className='tp-product-details-review-input'>
-                  <input
-                     {...register("name", { required: `Tên của bạn bắt buộc !` })}
-                     name='name'
-                     id='name'
-                     type='text'
-                     placeholder='Tên của bạn .....'
-                  />
-               </div>
-               <div className='tp-product-details-review-input-title'>
-                  <label htmlFor='name'>Tên của bạn</label>
-               </div>
-               <ErrorMsg02 msg={errors.name?.name} />
-            </div>
-            <div className='tp-product-details-review-input-box'>
-               <div className='tp-product-details-review-input'>
-                  <input
-                     {...register("email", { required: `Email của bạn bắt buộc !` })}
-                     name='email'
-                     id='email'
-                     type='email'
-                     placeholder='Ex: example@mail.com'
-                  />
-               </div>
-               <div className='tp-product-details-review-input-title'>
-                  <label htmlFor='email'>Email của bạn</label>
-               </div>
-               <ErrorMsg02 msg={errors.name?.email} />
+               <ErrorMsg02 msg={errors.comment?.message} />
             </div>
          </div>
          <div className='tp-product-details-review-btn-wrapper'>
-            <button type='submit' className='tp-product-details-review-btn'>
-               Gửi đánh giá
+            <button type='submit' id="submit_addReview" className='tp-product-details-review-btn'>
+               Gửi đánh giá sản phẩm
             </button>
          </div>
       </form>
