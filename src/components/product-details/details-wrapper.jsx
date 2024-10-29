@@ -247,11 +247,11 @@ const DetailsWrapper = ({ productItem, handleImageActive, activeImg, detailsBott
                   <div className='tp-product-details-action-item-wrapper d-sm-flex align-items-center'>
                      <div className="tp-product-details-quantity">
                         <div className="tp-product-quantity mb-15 mr-15">
-                           <span className="tp-cart-minus" onClick={() => handleDecrease(productItem)}>
+                           <span className="tp-cart-minus" id="tp-cart-minus" onClick={() => handleDecrease(productItem)}>
                               <Minus />
                            </span>
-                           <input className="tp-cart-input" type="text" readOnly value={orderQuantity} />
-                           <span className="tp-cart-plus" onClick={() => handleIncrease(productItem)}>
+                           <input className="tp-cart-input" id="tp-cart-input" type="text" readOnly value={orderQuantity} />
+                           <span className="tp-cart-plus" id="tp-cart-plus" onClick={() => handleIncrease(productItem)}>
                               <Plus />
                            </span>
                         </div>
@@ -262,12 +262,14 @@ const DetailsWrapper = ({ productItem, handleImageActive, activeImg, detailsBott
                               <button
                                  onClick={() => handleAddProduct(productItem)}
                                  disabled={inventory == 0}
+                                 id="btn-add-to-cart"
                                  className='tp-product-details-add-to-cart-btn w-100'>
                                  Add To Cart
                               </button>
                            ) : (
                               <button
                                  onClick={handleClick}
+                                 id="btn-add-to-cart"
                                  disabled={inventory == 0}
                                  className='tp-product-details-add-to-cart-btn w-100'>
                                  Add To Cart

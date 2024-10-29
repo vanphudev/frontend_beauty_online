@@ -107,7 +107,7 @@ export default function SearchPage({ query }) {
                               </div>
 
                               <div className="tp-shop-items-wrapper tp-shop-item-primary">
-                                 <div className="row">
+                                 <div className="row" id="search_results">
                                     {product_items
                                        .slice(0, next)
                                        ?.map((item) => (

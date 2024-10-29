@@ -1,4 +1,4 @@
-import {ToastContainer, toast} from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const notifySuccess = (message) =>
@@ -10,7 +10,7 @@ const notifySuccess = (message) =>
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      toastId: "id_notification_success"
+      toastId: "id_notification"
    });
 
 const notifyError = (message) =>
@@ -22,7 +22,7 @@ const notifyError = (message) =>
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      toastId: "id_notification_error"
+      toastId: "id_notification-error"
    });
 
 <ToastContainer
@@ -37,4 +37,4 @@ const notifyError = (message) =>
    pauseOnHover
 />;
 
-export {ToastContainer, notifySuccess, notifyError};
+export { ToastContainer, notifySuccess, notifyError };

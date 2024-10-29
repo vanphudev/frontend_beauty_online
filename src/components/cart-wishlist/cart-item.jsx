@@ -122,7 +122,9 @@ const CartItem = ({ product }) => {
          </td>
          {/* title */}
          <td className='tp-cart-title'>
-            <Link href={`/product-details/${productId.productUrl}`}>{productId.name}</Link>
+            <Link href={`/product-details/${productId.productUrl}`} id={`product-${productId.productUrl}-name`}>
+               {productId.name}
+            </Link>
          </td>
          {/* price */}
          <td className='tp-cart-price'>
@@ -134,7 +136,7 @@ const CartItem = ({ product }) => {
                <span onClick={() => handleDecrease(productId)} className='tp-cart-minus'>
                   <Minus />
                </span>
-               <input className='tp-cart-input' type='text' value={quantity} readOnly />
+               <input className='tp-cart-input' id={`product-${productId.productUrl}-quantity`} type='text' value={quantity} readOnly />
                <span onClick={() => handleIncrease(productId)} className='tp-cart-plus'>
                   <Plus />
                </span>

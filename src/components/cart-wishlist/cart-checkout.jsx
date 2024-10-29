@@ -30,7 +30,7 @@ const CartCheckout = () => {
             <span>{formatCurrency(total)}</span>
          </div>
          <div className="tp-cart-checkout-proceed">
-            <Link href="/checkout" className="tp-cart-checkout-btn w-100">
+            <Link href="/checkout" className="tp-cart-checkout-btn w-100" id="btn-checkout">
                Thanh toán
             </Link>
          </div>

@@ -80,7 +80,7 @@ const CheckoutOrderArea = ({ checkoutData }) => {
                         required: 'Payment Option is required!',
                      })}
                      type='radio'
-                     id={payment._id}
+                     id="COD"
                      name='payment'
                      value={payment.code}
                      style={{ marginRight: '10px', transform: 'scale(1.3)' }}
@@ -92,9 +92,8 @@ const CheckoutOrderArea = ({ checkoutData }) => {
             ))}
             <ErrorMsg02 msg={errors?.payment?.message} />
          </div>
-
          <div className='tp-checkout-btn-wrapper'>
-            <button type='submit' disabled={isCheckoutSubmit} className='tp-checkout-btn w-100'>
+            <button type='submit' disabled={isCheckoutSubmit} id="btn-submit-order" className='tp-checkout-btn w-100'>
                Thanh toán đơn hàng
             </button>
          </div>

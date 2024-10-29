@@ -87,7 +87,7 @@ const LoginForm = () => {
             </div>
          </div>
          <div className="tp-login-bottom">
-            <button type='submit' className="tp-login-btn w-100">Login</button>
+            <button type='submit' id="btn-login" className="tp-login-btn w-100">Login</button>
          </div>
       </form>
    );

@@ -91,7 +91,7 @@ const ProfileInfo = () => {
                      <div className="profile__input-box">
                         <label>Tên của bạn </label>
                         <div className="profile__input">
-                           <input {...register("name", { required: `Name is required!` })} name='name' type="text" placeholder="Enter your username" defaultValue={user?.fullName} />
+                           <input {...register("name", { required: `Name is required!` })} name='name' type="text" placeholder="Enter your username" id="name" defaultValue={user?.fullName} />
                            <span>
                               <UserThree />
                            </span>
@@ -104,7 +104,7 @@ const ProfileInfo = () => {
                      <div className="profile__input-box">
                         <label>Email </label>
                         <div className="profile__input">
-                           <input {...register("email", { required: `Email is required!` })} name='email' type="email" placeholder="Enter your email" defaultValue={user?.email} />
+                           <input {...register("email", { required: `Email is required!` })} id="email" name='email' type="email" placeholder="Enter your email" defaultValue={user?.email} />
                            <span>
                               <EmailTwo />
                            </span>
@@ -117,7 +117,7 @@ const ProfileInfo = () => {
                      <div className="profile__input-box">
                         <label>Phone </label>
                         <div className="profile__input">
-                           <input {...register("phone", { required: true })} name='phone' type="text" placeholder="Enter your number" defaultValue={user?.phone} />
+                           <input {...register("phone", { required: true })}id="phone" name='phone' type="text" placeholder="Enter your number" defaultValue={user?.phone} />
                            <span>
                               <PhoneThree />
                            </span>
@@ -187,6 +187,7 @@ const ProfileInfo = () => {
                            <select
                               {...register("district", { required: `District is required!` })}
                               onChange={handleDistrictChange}
+                              id="district"
                               name="district"
                               value={selectedDistrict}
                               disabled={!selectedProvince || districtLoading || districtError}
@@ -217,6 +218,7 @@ const ProfileInfo = () => {
                            <select
                               {...register("ward", { required: `Ward is required!` })}
                               name="ward"
+                              id="ward"
                               onChange={(e) => handleWardChange(e)}  
                               value={selectedWard}
                               disabled={!selectedDistrict || wardLoading || wardError}
@@ -248,14 +250,14 @@ const ProfileInfo = () => {
                      <div className="profile__input-box">
                         <label>Mô tả </label>
                         <div className="profile__input">
-                           <textarea {...register("bio", { required: true })} name='bio' placeholder="Enter your bio" defaultValue={user?.bio} />
+                           <textarea {...register("bio", { required: true })} id="bio" name='bio' placeholder="Enter your bio" defaultValue={user?.bio} />
                            <ErrorMsg02 msg={errors.bio?.message} />
                         </div>
                      </div>
                   </div>
                   <div className="col-xxl-12">
                      <div className="profile__btn">
-                        <button type="submit" className="tp-btn">Update Profile</button>
+                        <button type="submit" className="tp-btn" id="btn-update">Update Profile</button>
                      </div>
                   </div>
                </div>

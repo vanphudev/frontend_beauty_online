@@ -82,7 +82,7 @@ const CheckoutBillingArea = ({ register, errors }) => {
                   <div className='col-md-4'>
                      <div className='tp-checkout-input'>
                         <label>Tỉnh thành <span>*</span></label>
-                        <select {...register("province", { required: `Province is required!` })} id='province' name="province" onChange={handleProvinceChange}  disabled={provinceLoading || provinceError}>
+                        <select {...register("province", { required: `Province is required!` })} id='province' name="province" onChange={handleProvinceChange} disabled={provinceLoading || provinceError}>
                            {provinceLoading ? (
                               <option >Đang tải...</option>
                            ) : provinceError ? (
@@ -104,7 +104,7 @@ const CheckoutBillingArea = ({ register, errors }) => {
                   <div className='col-md-4'>
                      <div className='tp-checkout-input'>
                         <label>Quận/Huyện <span>*</span></label>
-                        <select {...register("district", { required: `District is required!` })} onChange={handleDistrictChange} name="district" disabled={!selectedProvince || districtLoading || districtError}>
+                        <select {...register("district", { required: `District is required!` })} onChange={handleDistrictChange} id="district" name="district" disabled={!selectedProvince || districtLoading || districtError}>
                            {!selectedProvince ? (
                               <option value=''>Chọn Quận/huyện</option>
                            ) : districtLoading ? (
@@ -128,7 +128,7 @@ const CheckoutBillingArea = ({ register, errors }) => {
                   <div className='col-md-4'>
                      <div className='tp-checkout-input'>
                         <label>Xã/Phường <span>*</span></label>
-                        <select {...register("ward", { required: `Ward is required!` })} name="ward" disabled={!selectedDistrict || wardLoading || wardError}>
+                        <select {...register("ward", { required: `Ward is required!` })} name="ward" id="ward" disabled={!selectedDistrict || wardLoading || wardError}>
                            {!selectedDistrict ? (
                               <option value=''>Chọn Xã/Phường</option>
                            ) : wardLoading ? (
